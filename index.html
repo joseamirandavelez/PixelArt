@@ -98,9 +98,9 @@
                         <button id="invert-btn" class="btn btn-primary" onclick="invertAll();"><span class="mdi mdi-invert-colors"></span> Invert</button>
                     </div>
                     <div class="btn-group">
-                        <input type="radio" class="btn-check" id="draw-full" name="draw-color" value="1" checked><label for="draw-full" class="btn btn-primary"><span class="mdi mdi-water"></span> White</label>
-                        <input type="radio" class="btn-check" id="draw-transparent" name="draw-color" value="0.5"><label for="draw-transparent" class="btn btn-primary"><span class="mdi mdi-water-opacity"></span> Grey</label>
-                        <input type="radio" class="btn-check" id="draw-black" name="draw-color" value="0"><label for="draw-black" class="btn btn-primary"><span class="mdi mdi-water-outline"></span> Black</label>
+                        <input type="radio" class="btn-check" id="draw-full" name="draw-color" value="1" checked><label for="draw-full" class="btn btn-light"><span class="mdi mdi-water"></span> White</label>
+                        <input type="radio" class="btn-check" id="draw-transparent" name="draw-color" value="0.5"><label for="draw-transparent" class="btn btn-secondary"><span class="mdi mdi-water-opacity"></span> Grey</label>
+                        <input type="radio" class="btn-check" id="draw-black" name="draw-color" value="0"><label for="draw-black" class="btn btn-dark"><span class="mdi mdi-water-outline"></span> Black</label>
                     </div>
                 </div>
                 <div class="col-auto">
@@ -1290,7 +1290,7 @@
             canvasHistory.saveState(matrixData)
             for (let row = 0; row < ROWS / 2; row++) {
                 for (let col = 0; col < COLS; col++) {
-                    mirroredMatrix[ROWS - row - 1][col] = matrixData[row][col];
+                    matrixData[ROWS - row - 1][col] = matrixData[row][col];
                 }
             }
             drawMatrix();
