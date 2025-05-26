@@ -253,7 +253,7 @@
             <h5 class="offcanvas-title" id="community-Label">Browse Community Pixel Art</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body">
+        <div class="offcanvas-body" id="offcanvas-body">
             <ul class="nav nav-underline" id="stepTab" role="tablist">
                 <li class="nav-item">
                     <button class="nav-link active" id="new-items-tab" data-bs-toggle="tab"
@@ -1452,6 +1452,20 @@
         
 
         // Event listeners
+        
+        //Lazy loading of community items
+        const communityDiv = document.getElementById('offcanvas-body');
+        const loadMoreBtn = document.getElementById('community-load-more-btn');
+       
+        communityDiv.addEventListener('scroll', () => {
+        const isAtBottom = communityDiv.scrollTop + communityDiv.clientHeight >= communityDiv.scrollHeight;
+
+        if (isAtBottom) {
+            loadMoreBtn.click()
+        }
+        });
+        
+        
         canvas.addEventListener('mousedown', (e) => {
             canvasHistory.saveState(matrixData)
             isDrawing = true;
