@@ -1231,21 +1231,21 @@
         // Fill all contiguous cells with a specific color
         function fillAll(row, col, color) {
             originalColor = matrixData[row][col]
-            console.log(originalColor)
-            updateCell(row, col, color)
-            if(row > 0 && matrixData[row-1][col] == originalColor) {
-                fillAll(row - 1, col, color)
+            if (originalColor != color) {
+                updateCell(row, col, color)
+                if(row > 0 && matrixData[row-1][col] == originalColor) {
+                    fillAll(row - 1, col, color)
+                }
+                if(row < ROWS-1 && matrixData[row + 1][col] == originalColor) {
+                    fillAll(row + 1, col, color)
+                }
+                if(col>0 && matrixData[row][col - 1] == originalColor) {
+                    fillAll(row, col - 1, color)
+                }
+                if(col<COLS-1 && matrixData[row][col + 1] == originalColor) {
+                    fillAll(row, col + 1, color)
+                }
             }
-            if(row < ROWS-1 && matrixData[row + 1][col] == originalColor) {
-                fillAll(row + 1, col, color)
-            }
-            if(col>0 && matrixData[row][col - 1] == originalColor) {
-                fillAll(row, col - 1, color)
-            }
-            if(col<COLS-1 && matrixData[row][col + 1] == originalColor) {
-                fillAll(row, col + 1, color)
-            }
-            
         }
         
         function clearAll(color){
