@@ -1552,14 +1552,14 @@
             // Ctrl+Z
             if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
                 e.preventDefault();
-                canvasHistory.undo(); // si tienes una función undo
+                canvasHistory.undo();
                 return;
             }
 
             // Ctrl+Y
             if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
                 e.preventDefault();
-                canvasHistory.redo(); // si tienes una función redo
+                canvasHistory.redo();
                 return;
             }
 
@@ -1582,10 +1582,10 @@
                     moveDown();
                     break;
                 default:
-                    return; // salir si no es una tecla relevante
+                    return;
             }
 
-            e.preventDefault(); // evita el scroll
+            e.preventDefault();
         });
     </script>
 </body>
