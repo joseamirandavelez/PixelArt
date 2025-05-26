@@ -355,9 +355,6 @@
             saveState(newState) {
                 this.undoStack.push(this.clone(this.currentState))
                 this.currentState = newState
-                //this.redoStack = []
-                console.log("Undo Stack: " + this.undoStack.length)
-                console.log("Redo Stack: " + this.redoStack.length)
             }
 
             undo() {
@@ -368,8 +365,6 @@
                     this.currentState = this.undoStack.pop()
                 }
                 matrixData = this.clone(this.currentState)
-                console.log("Undo Stack: " + this.undoStack.length)
-                console.log("Redo Stack: " + this.redoStack.length)
                 drawMatrix()
             }
 
@@ -381,8 +376,6 @@
                     this.currentState = this.redoStack.pop()
                 }
                 matrixData = this.clone(this.currentState)
-                console.log("Undo Stack: " + this.undoStack.length)
-                console.log("Redo Stack: " + this.redoStack.length)
                 drawMatrix()
             }
 
@@ -1556,27 +1549,43 @@
         resizeCanvas();
 
         $(document).keydown(function (e) {
-            switch (e.which) {
-                case 37: // left arrow key
-                    canvasHistory.saveState(matrixData)
-                    moveLeft();
-                    break;
-                case 38: // up arrow key
-                    canvasHistory.saveState(matrixData)
-                    moveUp();
-                    break;
-                case 39: // right arrow key
-                    canvasHistory.saveState(matrixData)
-                    moveRight();
-                    break;
-                case 40: // down arrow key
-                    canvasHistory.saveState(matrixData)
-                    moveDown();
-                    break;
-                default: return; // exit this handler for other keys
+            // Ctrl+Z
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                e.preventDefault();
+                canvasHistory.undo(); // si tienes una función undo
+                return;
             }
 
-            e.preventDefault(); // prevent the default action (scroll / move caret)
+            // Ctrl+Y
+            if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+                e.preventDefault();
+                canvasHistory.redo(); // si tienes una función redo
+                return;
+            }
+
+            // Flechas
+            switch (e.which) {
+                case 37: // left
+                    canvasHistory.saveState(matrixData);
+                    moveLeft();
+                    break;
+                case 38: // up
+                    canvasHistory.saveState(matrixData);
+                    moveUp();
+                    break;
+                case 39: // right
+                    canvasHistory.saveState(matrixData);
+                    moveRight();
+                    break;
+                case 40: // down
+                    canvasHistory.saveState(matrixData);
+                    moveDown();
+                    break;
+                default:
+                    return; // salir si no es una tecla relevante
+            }
+
+            e.preventDefault(); // evita el scroll
         });
     </script>
 </body>
