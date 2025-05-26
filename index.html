@@ -98,6 +98,10 @@
             <div id="tools" class="row mb-3 g-3 d-flex justify-content-center">
                 <div class="col-auto">
                     <div class="btn-group">
+                        <button type="button" class="btn btn-primary" id="undo-btn" onclick="canvasHistory.undo();"><span class="mdi mdi-undo"></span> Undo</button>
+                        <button type="button" class="btn btn-primary" id="redo-btn" onclick="canvasHistory.redo();"><span class="mdi mdi-redo"></span> Redo</button>
+                    </div>
+                    <div class="btn-group">
                         <input type="radio" class="btn-check" id="draw" name="draw-mode" value="draw" checked>
                         <label for="draw" class="btn btn-primary"><span class="mdi mdi-draw"></span> Draw</label>
                         <input type="radio" class="btn-check" id="fill" name="draw-mode" value="fill">
@@ -344,7 +348,68 @@
                 confirmButton: 'btn btn-primary',
                 cancelButton: 'btn btn-secondary'
             }
-        });
+        })
+        
+        class HistoryManager {
+            constructor(initialState) {
+                this.undoStack = []
+                this.redoStack = []
+                this.currentState = initialState
+            }
+
+            saveState(newState) {
+                this.undoStack.push(this.clone(this.currentState))
+                this.currentState = newState
+                //this.redoStack = []
+                console.log("Undo Stack: " + this.undoStack.length)
+                console.log("Redo Stack: " + this.redoStack.length)
+            }
+
+            undo() {
+                if (this.undoStack.length === 0) {
+                    console.log("Nothing to undo")
+                } else {
+                    this.redoStack.push(this.clone(this.currentState))
+                    this.currentState = this.undoStack.pop()
+                }
+                matrixData = this.clone(this.currentState)
+                console.log("Undo Stack: " + this.undoStack.length)
+                console.log("Redo Stack: " + this.redoStack.length)
+                drawMatrix()
+            }
+
+            redo() {
+                if (this.redoStack.length === 0) {
+                    console.log("Nothing to redo")
+                } else {
+                    this.undoStack.push(this.clone(this.currentState))
+                    this.currentState = this.redoStack.pop()
+                }
+                matrixData = this.clone(this.currentState)
+                console.log("Undo Stack: " + this.undoStack.length)
+                console.log("Redo Stack: " + this.redoStack.length)
+                drawMatrix()
+            }
+
+            clone(state) {
+                return JSON.parse(JSON.stringify(state))
+            }
+
+            getCurrentState() {
+                return this.clone(this.currentState)
+            }
+        }
+        
+        function undoIt() {
+            matrixData = canvasHistory.undo()
+            drawMatrix();
+            console.log("Undo added")
+        }
+        
+        function redoIt() {
+            matrixData = canvasHistory.redo()
+            drawMatrix();
+        }
 
         const langDB = {
             language: { en: '<span class="mdi mdi-translate"></span> Language', zh: '<span class="mdi mdi-translate"></span> 语言' },
@@ -1101,6 +1166,7 @@
 
         // Matrix data - stores color for each cell
         let matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
+        let canvasHistory = new HistoryManager(matrixData)
 
         // Drawing state
         let isDrawing = false;
@@ -1184,6 +1250,7 @@
                 ctx.strokeStyle = '#333333';
                 ctx.strokeRect(x, y, cellWidth, cellHeight);
             }
+            drawMatrix()
         }
 
         // Fill all contiguous cells with a specific color
@@ -1207,6 +1274,7 @@
         }
         
         function clearAll(color){
+            canvasHistory.saveState(matrixData)
             for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS; col++) {
                     matrixData[row][col] = color;
@@ -1217,6 +1285,7 @@
 
         //Invert all cells
         function invertAll() {
+            canvasHistory.saveState(matrixData)
             for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS; col++) {
                     switch (matrixData[row][col]) {
@@ -1233,6 +1302,7 @@
         }
 
         function mirrorHorizontal() {
+            canvasHistory.saveState(matrixData)
             for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS / 2; col++) {
                     matrixData[row][COLS - col - 1] = matrixData[row][col];
@@ -1242,6 +1312,7 @@
         }
 
         function mirrorVertical() {
+            canvasHistory.saveState(matrixData)
             for (let row = 0; row < ROWS / 2; row++) {
                 for (let col = 0; col < COLS; col++) {
                     mirroredMatrix[ROWS - row - 1][col] = matrixData[row][col];
@@ -1251,7 +1322,7 @@
         }
         
         function flip(direction = 'horizontal') {
-            
+            canvasHistory.saveState(matrixData)
             if (direction === 'horizontal') {
                 console.log("flip horizontal")
                 matrixData = matrixData.map(row => row.slice().reverse())
@@ -1403,8 +1474,11 @@
             });
         }
 
+        
+
         // Event listeners
         canvas.addEventListener('mousedown', (e) => {
+            canvasHistory.saveState(matrixData)
             isDrawing = true;
             const coords = getMatrixCoords(e);
             if (coords) {
@@ -1489,15 +1563,19 @@
         $(document).keydown(function (e) {
             switch (e.which) {
                 case 37: // left arrow key
+                    canvasHistory.saveState(matrixData)
                     moveLeft();
                     break;
                 case 38: // up arrow key
+                    canvasHistory.saveState(matrixData)
                     moveUp();
                     break;
                 case 39: // right arrow key
+                    canvasHistory.saveState(matrixData)
                     moveRight();
                     break;
                 case 40: // down arrow key
+                    canvasHistory.saveState(matrixData)
                     moveDown();
                     break;
                 default: return; // exit this handler for other keys
