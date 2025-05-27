@@ -1574,6 +1574,21 @@
                 canvasHistory.redo();
                 return;
             }
+            
+            // Ctrl+C
+            if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+                e.preventDefault();
+                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#505050"', '0.5')
+                copyToClipboard(dataStr)
+                return;
+            }
+            
+            // Ctrl+V
+            if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+                e.preventDefault();
+                importData();
+                return;
+            }
 
             // Flechas
             switch (e.which) {
