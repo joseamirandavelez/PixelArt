@@ -696,13 +696,15 @@
         });
 
         function reloadSavedPixelArt() {
+            //canvasHistory.saveState(matrixData)
+            console.log("1")
             $('#select-load').find('optgroup').remove();
             $('#select-load').find('option').remove().end().append($('<option></option>').val('null').prop('disabled', true).prop('selected', true).html(getCorrectTranslation('pleaseSelect')));
             var values = stringifyLocalStorageExcept(['language', 'author', 'favorites']);
             $.each(values, function (key, item) {
                 $('#select-load').append($(`<option data-size="[${item.size}]" data-group="${item.size[0]}x${item.size[1]}" value="${item.data}">${item.name}</option>`).val(item.data).html(item.name));
             });
-
+            console.log("2")
             var optiongroups = {};
             $("#select-load option[data-group]").each(function () {
                 optiongroups[$.trim($(this).attr("data-group"))] = true;
@@ -710,6 +712,7 @@
             $.each(optiongroups, function (c) {
                 $("select option[data-group='" + c + "']").wrapAll('<optgroup label="' + c + '">');
             });
+            console.log("3")
         };
 
         function stringifyLocalStorageExcept(keysToSkip) {
