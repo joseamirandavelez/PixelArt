@@ -63,17 +63,17 @@
                 <div class="col-auto">
                     <div class="input-group">
                         <span class="input-group-text" id="size-label"><span class="mdi mdi-image-size-select-small"></span> Size</span>
-                        <input class="form-control" id="size-cols" type="number" value="16" min="1" step="1" max="99" style="width: 6rem;" />
-                        <input class="form-control" id="size-rows" type="number" value="16" min="1" step="1" max="99" style="width: 6rem;" />
+                        <input class="form-control" id="size-cols" type="number" value="16" min="1" step="1" max="99" style="width: 4rem;" />
+                        <input class="form-control" id="size-rows" type="number" value="16" min="1" step="1" max="99" style="width: 4rem;" />
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-primary" id="import-btn" onclick="importData();"><span class="mdi mdi-import"></span> Import Data</button>
-                        <button type="button" class="btn btn-primary" id="export-btn" onclick="exportData();"><span class="mdi mdi-export"></span> Export Data</button>
+                        <button type="button" class="btn btn-primary" id="import-btn" onclick="importData();" data-toggle="tooltip" data-placement="top" title="Ctrl+I"><span class="mdi mdi-import"></span> Import Data</button>
+                        <button type="button" class="btn btn-primary" id="export-btn" onclick="exportData();" data-toggle="tooltip" data-placement="top" title="Ctrl+E"><span class="mdi mdi-export"></span> Export Data</button>
                         <input type="hidden" id="clipboard" />
-                        <button type="button" class="btn btn-primary" id="load-btn" data-bs-toggle="modal" data-bs-target="#modal-load" onclick="reloadSavedPixelArt();"><span class="mdi mdi-cloud-outline"></span> Load</button>
-                        <button type="button" class="btn btn-primary" id="save-btn" data-bs-toggle="modal" data-bs-target="#modal-save"><span class="mdi mdi-content-save-outline"></span> Save</button>
+                        <button type="button" class="btn btn-primary" id="load-btn" data-bs-toggle="modal" data-bs-target="#modal-load" onclick="reloadSavedPixelArt();"  data-toggle="tooltip" data-placement="top" title="Shortcut: Ctrl+O"><span class="mdi mdi-cloud-outline"></span> Load</button>
+                        <button type="button" class="btn btn-primary" id="save-btn" data-bs-toggle="modal" data-bs-target="#modal-save"  data-toggle="tooltip" data-placement="top" title="Shortcut: Ctrl+S"><span class="mdi mdi-content-save-outline"></span> Save</button>
                     </div>
                 </div>
                 <div class="col-auto">
@@ -86,21 +86,21 @@
             <div id="tools" class="row mb-3 g-3 d-flex justify-content-center">
                 <div class="col-auto">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-primary" id="undo-btn" onclick="canvasHistory.undo();"><span class="mdi mdi-undo"></span> Undo</button>
-                        <button type="button" class="btn btn-primary" id="redo-btn" onclick="canvasHistory.redo();"><span class="mdi mdi-redo"></span> Redo</button>
+                        <button type="button" class="btn btn-primary" id="undo-btn" onclick="canvasHistory.undo();" data-toggle="tooltip" data-placement="top" title="Shortcut: Ctrl+Z"><span class="mdi mdi-undo"></span> Undo</button>
+                        <button type="button" class="btn btn-primary" id="redo-btn" onclick="canvasHistory.redo();" data-toggle="tooltip" data-placement="top" title="Shortcut: Ctrl+Y"><span class="mdi mdi-redo"></span> Redo</button>
                     </div>
                     <div class="btn-group">
-                        <input type="radio" class="btn-check" id="draw" name="draw-mode" value="draw" checked><label for="draw" class="btn btn-primary"><span class="mdi mdi-draw"></span> Draw</label></input>
-                        <input type="radio" class="btn-check" id="fill" name="draw-mode" value="fill"><label for="fill" class="btn btn-primary"><span class="mdi mdi-format-color-fill"></span> Fill</label></input>
+                        <input type="radio" class="btn-check" id="draw" name="draw-mode" value="draw" checked><label for="draw" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Shortcut: d"><span class="mdi mdi-draw"></span> Draw</label></input>
+                        <input type="radio" class="btn-check" id="fill" name="draw-mode" value="fill"><label for="fill" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Shortcut: f"><span class="mdi mdi-format-color-fill"></span> Fill</label></input>
                     </div>
                     <div class="btn-group">
-                        <button class="btn btn-primary" id="clear-btn" onclick="clearAll('#000000');"><span class="mdi mdi-trash-can-outline"></span> Clear All</button>
-                        <button id="invert-btn" class="btn btn-primary" onclick="invertAll();"><span class="mdi mdi-invert-colors"></span> Invert</button>
+                        <button class="btn btn-primary" id="clear-btn" onclick="clearAll('#000000');" data-toggle="tooltip" data-placement="top" title="Shortcut: c"><span class="mdi mdi-trash-can-outline"></span> Clear All</button>
+                        <button id="invert-btn" class="btn btn-primary" onclick="invertAll();" data-toggle="tooltip" data-placement="top" title="Shortcut: i"><span class="mdi mdi-invert-colors"></span> Invert</button>
                     </div>
                     <div class="btn-group">
-                        <input type="radio" class="btn-check" id="draw-full" name="draw-color" value="1" checked><label for="draw-full" class="btn btn-light"><span class="mdi mdi-water"></span> White</label>
-                        <input type="radio" class="btn-check" id="draw-transparent" name="draw-color" value="0.5"><label for="draw-transparent" class="btn btn-secondary"><span class="mdi mdi-water-opacity"></span> Grey</label>
-                        <input type="radio" class="btn-check" id="draw-black" name="draw-color" value="0"><label for="draw-black" class="btn btn-dark"><span class="mdi mdi-water-outline"></span> Black</label>
+                        <input type="radio" class="btn-check" id="draw-full" name="draw-color" value="1" checked><label for="draw-full" class="btn btn-light" data-toggle="tooltip" data-placement="top" title="Shortcut: w"><span class="mdi mdi-water"></span> White</label>
+                        <input type="radio" class="btn-check" id="draw-transparent" name="draw-color" value="0.5"><label for="draw-transparent" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Shortcut: g"><span class="mdi mdi-water-opacity"></span> Grey</label>
+                        <input type="radio" class="btn-check" id="draw-black" name="draw-color" value="0"><label for="draw-black" class="btn btn-dark" data-toggle="tooltip" data-placement="top" title="Shortcut: b"><span class="mdi mdi-water-outline"></span> Black</label>
                     </div>
                 </div>
                 <div class="col-auto">
@@ -1553,26 +1553,26 @@
         resizeCanvas();
 
         $(document).keydown(function (e) {
-            // If any div has the class 'show', exit early
+            // If any div has the class '.modal.show' or '.offcanvas.show', exit early
             if ($('div.modal.show').length > 0 || $('div.offcanvas.show').length > 0) {
                 return;
             }
 
-            // Ctrl+Z
+            // Undo
             if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
                 e.preventDefault();
                 canvasHistory.undo();
                 return;
             }
 
-            // Ctrl+Y
+            // Redo
             if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
                 e.preventDefault();
                 canvasHistory.redo();
                 return;
             }
             
-            // Ctrl+C
+            // Copy
             if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
                 e.preventDefault();
                 const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#505050"', '0.5')
@@ -1580,14 +1580,68 @@
                 return;
             }
             
-            // Ctrl+V
+            // Paste
             if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
                 e.preventDefault();
                 importData();
                 return;
             }
+            
+            // Export
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                $('#export-btn').click();
+                return;
+            }
+            
+            // Import
+            if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+                $('#import-btn').click();
+                return;
+            }
+            
+            // Draw
+            if (e.key === 'd') {
+                $('#draw').click();
+                return;
+            }
+            
+            // Fill
+            if (e.key === 'f') {
+                $('#fill').click();
+                return;
+            }
+            
+            // Clear
+            if (e.key === 'c') {
+                $('#clear-btn').click();
+                return;
+            }
+            
+            // Invert
+            if (e.key === 'i') {
+                $('#invert-btn').click();
+                return;
+            }
+            
+            // White
+            if (e.key === 'w') {
+                $('#draw-full').click();
+                return;
+            }
+            
+            // Grey
+            if (e.key === 'g') {
+                $('#draw-transparent').click();
+                return;
+            }
+            
+            // Black
+            if (e.key === 'b') {
+                $('#draw-black').click();
+                return;
+            }
 
-            // Flechas
+            // Arrows
             switch (e.which) {
                 case 37: // left
                     canvasHistory.saveState(matrixData);
