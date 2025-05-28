@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 
@@ -325,8 +324,8 @@
     </div>
 
     <script>
-        //const api = 'http://localhost:3001/api/';
-        const api = 'https://pixelart.nolliergb.com/api/';
+        //const api = 'http://localhost:3001/api/'
+        const api = 'https://pixelart.nolliergb.com/api/'
 
         const swalBS = Swal.mixin({
             customClass: {
@@ -335,7 +334,11 @@
             }
         })
         
+        const MAX_HISTORY = 100;
+        
         class HistoryManager {
+            
+            
             constructor(initialState) {
                 this.undoStack = []
                 this.redoStack = []
@@ -343,8 +346,11 @@
             }
 
             saveState(newState) {
-                this.undoStack.push(this.clone(this.currentState))
-                this.currentState = newState
+                this.undoStack.push(this.clone(this.currentState));
+                if (this.undoStack.length > MAX_HISTORY) this.undoStack.shift();
+
+                this.currentState = this.clone(newState);
+                this.redoStack = [];
             }
 
             undo() {
@@ -376,17 +382,6 @@
             getCurrentState() {
                 return this.clone(this.currentState)
             }
-        }
-        
-        function undoIt() {
-            matrixData = canvasHistory.undo()
-            drawMatrix();
-            console.log("Undo added")
-        }
-        
-        function redoIt() {
-            matrixData = canvasHistory.redo()
-            drawMatrix();
         }
 
         const langDB = {
@@ -641,6 +636,7 @@
                 $('#select-load').addClass('is-invalid');
             } else {
                 try {
+                    canvasHistory.saveState(matrixData)
                     var $select = $('#select-load option:selected');
 
                     COLS = parseInt($select.data('size')[0]);
@@ -651,6 +647,7 @@
 
                     matrixData = JSON.parse($select.val());
                     matrixData = matrixData.map(row => row.map(value => (value === 0) ? "#000000" : (value === 1) ? "#ffffff" : "#505050"));
+                    canvasHistory.saveState(matrixData)
                     drawMatrix();
 
                     $('#size-cols').val(COLS);
@@ -696,15 +693,12 @@
         });
 
         function reloadSavedPixelArt() {
-            //canvasHistory.saveState(matrixData)
-            console.log("1")
             $('#select-load').find('optgroup').remove();
             $('#select-load').find('option').remove().end().append($('<option></option>').val('null').prop('disabled', true).prop('selected', true).html(getCorrectTranslation('pleaseSelect')));
             var values = stringifyLocalStorageExcept(['language', 'author', 'favorites']);
             $.each(values, function (key, item) {
                 $('#select-load').append($(`<option data-size="[${item.size}]" data-group="${item.size[0]}x${item.size[1]}" value="${item.data}">${item.name}</option>`).val(item.data).html(item.name));
             });
-            console.log("2")
             var optiongroups = {};
             $("#select-load option[data-group]").each(function () {
                 optiongroups[$.trim($(this).attr("data-group"))] = true;
@@ -712,7 +706,6 @@
             $.each(optiongroups, function (c) {
                 $("select option[data-group='" + c + "']").wrapAll('<optgroup label="' + c + '">');
             });
-            console.log("3")
         };
 
         function stringifyLocalStorageExcept(keysToSkip) {
@@ -1147,6 +1140,10 @@
 
         // Matrix data - stores color for each cell
         let matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
+        
+        //Wrapped matrix to hold matrix info for nudging
+        let wrappedMatrix = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
+        
         let canvasHistory = new HistoryManager(matrixData)
 
         // Drawing state
@@ -1331,47 +1328,59 @@
                 timer: 1500
             });
         }
-
-        function moveUp() {
-            for (let row = 0; row < ROWS - 1; row++) {
+        
+        function copyWrappedToMatrix() {
+            for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS; col++) {
-                    matrixData[row][col] = matrixData[row + 1][col];
-                    matrixData[row + 1][col] = '#000000';
+                    matrixData[row][col] = wrappedMatrix[row][col];
                 }
             }
+        }
+        
+        function moveUp() {
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    const srcRow = (row + 1) % ROWS;
+                    wrappedMatrix[row][col] = matrixData[srcRow][col];
+                }
+            }
+            copyWrappedToMatrix();
             drawMatrix();
             nudgeY();
         }
 
         function moveDown() {
-            for (let row = ROWS - 1; row > 0; row--) {
+            for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS; col++) {
-                    matrixData[row][col] = matrixData[row - 1][col];
-                    matrixData[row - 1][col] = '#000000';
+                    const srcRow = (row - 1 + ROWS) % ROWS;
+                    wrappedMatrix[row][col] = matrixData[srcRow][col];
                 }
             }
+            copyWrappedToMatrix();
             drawMatrix();
             nudgeY();
         }
 
         function moveLeft() {
             for (let row = 0; row < ROWS; row++) {
-                for (let col = 0; col < COLS - 1; col++) {
-                    matrixData[row][col] = matrixData[row][col + 1];
-                    matrixData[row][col + 1] = '#000000';
+                for (let col = 0; col < COLS; col++) {
+                    const srcCol = (col + 1) % COLS;
+                    wrappedMatrix[row][col] = matrixData[row][srcCol];
                 }
             }
+            copyWrappedToMatrix();
             drawMatrix();
             nudgeX();
         }
 
         function moveRight() {
             for (let row = 0; row < ROWS; row++) {
-                for (let col = COLS - 1; col > 0; col--) {
-                    matrixData[row][col] = matrixData[row][col - 1];
-                    matrixData[row][col - 1] = '#000000';
+                for (let col = 0; col < COLS; col++) {
+                    const srcCol = (col - 1 + COLS) % COLS;
+                    wrappedMatrix[row][col] = matrixData[row][srcCol];
                 }
             }
+            copyWrappedToMatrix();
             drawMatrix();
             nudgeX();
         }
