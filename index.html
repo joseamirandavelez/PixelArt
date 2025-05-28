@@ -337,7 +337,9 @@
         const MAX_HISTORY = 100;
         
         class HistoryManager {
-            
+            isEqual(a, b) {
+                return JSON.stringify(a) === JSON.stringify(b);
+            }
             
             constructor(initialState) {
                 this.undoStack = []
@@ -346,11 +348,26 @@
             }
 
             saveState(newState) {
-                this.undoStack.push(this.clone(this.currentState));
-                if (this.undoStack.length > MAX_HISTORY) this.undoStack.shift();
+                console.log("Im in")
+                const clonedNewState = this.clone(newState)
+                const lastUndoState = this.undoStack[this.undoStack.length - 1]
 
-                this.currentState = this.clone(newState);
-                this.redoStack = [];
+                // Compara contenido, no referencias
+                if (lastUndoState && this.isEqual(clonedNewState, lastUndoState)) {
+                    return
+                }
+
+                this.undoStack.push(this.clone(this.currentState));
+                if (this.undoStack.length > MAX_HISTORY) this.undoStack.shift()
+
+                this.currentState = clonedNewState
+                this.redoStack = []
+            }
+            
+            clear(initialState) {
+                this.undoStack = []
+                this.redoStack = []
+                this.currentState = initialState
             }
 
             undo() {
@@ -573,7 +590,8 @@
             ROWS = parseInt($('#size-rows').val());
 
             matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
-
+            canvasHistory.clear(matrixData)
+            //canvasHistory.saveState(matrixData)
             resizeCanvas();
         });
 
@@ -606,6 +624,7 @@
             try {
                 matrixData = JSON.parse($('#clipboard').val());
                 matrixData = matrixData.map(row => row.map(value => (value === 0) ? "#000000" : (value === 1) ? "#ffffff" : "#505050"));
+                canvasHistory.saveState(matrixData)
                 drawMatrix();
             } catch (e) {
                 console.log(e);
@@ -1043,6 +1062,7 @@
 
                         matrixData = JSON.parse($item.data);
                         matrixData = matrixData.map(row => row.map(value => (value === 0) ? "#000000" : (value === 1) ? "#ffffff" : "#505050"));
+                        canvasHistory.saveState(matrixData)
                         drawMatrix();
 
                         $('#size-cols').val(COLS);
@@ -1145,6 +1165,7 @@
         let wrappedMatrix = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
         
         let canvasHistory = new HistoryManager(matrixData)
+        canvasHistory.saveState(matrixData)
 
         // Drawing state
         let isDrawing = false;
@@ -1233,20 +1254,26 @@
 
         // Fill all contiguous cells with a specific color
         function fillAll(row, col, color) {
+            canvasHistory.saveState(matrixData)
+            fillAllRecursive(row, col, color)
+            //canvasHistory.saveState(matrixData)
+        }
+
+        function fillAllRecursive(row, col, color) {
             originalColor = matrixData[row][col]
             if (originalColor != color) {
                 updateCell(row, col, color)
                 if(row > 0 && matrixData[row-1][col] == originalColor) {
-                    fillAll(row - 1, col, color)
+                    fillAllRecursive(row - 1, col, color)
                 }
                 if(row < ROWS-1 && matrixData[row + 1][col] == originalColor) {
-                    fillAll(row + 1, col, color)
+                    fillAllRecursive(row + 1, col, color)
                 }
                 if(col>0 && matrixData[row][col - 1] == originalColor) {
-                    fillAll(row, col - 1, color)
+                    fillAllRecursive(row, col - 1, color)
                 }
                 if(col<COLS-1 && matrixData[row][col + 1] == originalColor) {
-                    fillAll(row, col + 1, color)
+                    fillAllRecursive(row, col + 1, color)
                 }
             }
         }
@@ -1258,6 +1285,7 @@
                     matrixData[row][col] = color;
                 }
             }
+            //canvasHistory.saveState(matrixData)
             drawMatrix();
         }
 
@@ -1276,6 +1304,7 @@
                     }
                 }
             }
+            //canvasHistory.saveState(matrixData)
             drawMatrix();
         }
 
@@ -1286,6 +1315,7 @@
                     matrixData[row][COLS - col - 1] = matrixData[row][col];
                 }
             }
+            //canvasHistory.saveState(matrixData)
             drawMatrix();
         }
 
@@ -1296,6 +1326,7 @@
                     matrixData[ROWS - row - 1][col] = matrixData[row][col];
                 }
             }
+            //canvasHistory.saveState(matrixData)
             drawMatrix();
         }
         
@@ -1308,6 +1339,7 @@
                 console.log("flip vertical")
                 matrixData = matrixData.slice().reverse()
             }
+            //canvasHistory.saveState(matrixData)
             drawMatrix();
         }
 
@@ -1482,8 +1514,9 @@
         
         
         canvas.addEventListener('mousedown', (e) => {
-            canvasHistory.saveState(matrixData)
+            //canvasHistory.saveState(matrixData)
             isDrawing = true;
+            hasDrawnDuringDrag = false;
             const coords = getMatrixCoords(e);
             if (coords) {
                 switch (currentMode) {
@@ -1518,6 +1551,7 @@
                         break;
                 }
             }
+           
         });
 
         canvas.addEventListener('mousemove', (e) => {
@@ -1557,6 +1591,7 @@
 
         window.addEventListener('mouseup', () => {
             isDrawing = false;
+            canvasHistory.saveState(matrixData)
         });
 
         window.addEventListener('resize', resizeCanvas);
