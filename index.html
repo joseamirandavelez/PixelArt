@@ -348,11 +348,9 @@
             }
 
             saveState(newState) {
-                console.log("Im in")
                 const clonedNewState = this.clone(newState)
                 const lastUndoState = this.undoStack[this.undoStack.length - 1]
 
-                // Compara contenido, no referencias
                 if (lastUndoState && this.isEqual(clonedNewState, lastUndoState)) {
                     return
                 }
@@ -591,7 +589,6 @@
 
             matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
             canvasHistory.clear(matrixData)
-            //canvasHistory.saveState(matrixData)
             resizeCanvas();
         });
 
@@ -1256,7 +1253,6 @@
         function fillAll(row, col, color) {
             canvasHistory.saveState(matrixData)
             fillAllRecursive(row, col, color)
-            //canvasHistory.saveState(matrixData)
         }
 
         function fillAllRecursive(row, col, color) {
@@ -1285,7 +1281,6 @@
                     matrixData[row][col] = color;
                 }
             }
-            //canvasHistory.saveState(matrixData)
             drawMatrix();
         }
 
@@ -1304,7 +1299,6 @@
                     }
                 }
             }
-            //canvasHistory.saveState(matrixData)
             drawMatrix();
         }
 
@@ -1315,7 +1309,6 @@
                     matrixData[row][COLS - col - 1] = matrixData[row][col];
                 }
             }
-            //canvasHistory.saveState(matrixData)
             drawMatrix();
         }
 
@@ -1326,7 +1319,6 @@
                     matrixData[ROWS - row - 1][col] = matrixData[row][col];
                 }
             }
-            //canvasHistory.saveState(matrixData)
             drawMatrix();
         }
         
@@ -1339,7 +1331,6 @@
                 console.log("flip vertical")
                 matrixData = matrixData.slice().reverse()
             }
-            //canvasHistory.saveState(matrixData)
             drawMatrix();
         }
 
@@ -1514,7 +1505,6 @@
         
         
         canvas.addEventListener('mousedown', (e) => {
-            //canvasHistory.saveState(matrixData)
             isDrawing = true;
             hasDrawnDuringDrag = false;
             const coords = getMatrixCoords(e);
