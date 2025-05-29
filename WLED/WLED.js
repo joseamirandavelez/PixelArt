@@ -22,7 +22,8 @@ export function ControllableParameters() {
 		{"property":"turnOffOnShutdown", "group":"settings", "label":"Turn WLED device OFF on Shutdown", "type":"boolean", "default":"false"},
 		{"property":"display_mode","label":"Display Mode", "type":"combobox", "values":["Components", "Time", "Custom Text", "Pixel Art"], "default":"Components"},
 		{"property":"fontSize","label":"Font Size", "type":"combobox", "values":["Small", "Medium"], "default":"Medium"},
-        {"property":"darkGrey","label":"Gray", "step":"1", "type":"number", "min":"5", "max":"99", "default":"50"},
+        {"property":"lightGrey","label":"Light Gray", "step":"1", "type":"number", "min":"5", "max":"99", "default":"50"},
+        {"property":"darkGrey","label":"Dark Gray", "step":"1", "type":"number", "min":"5", "max":"99", "default":"50"},
 		{"property":"custom_text", "label":"Display Mode: Custom Text", "type":"textfield", "default":"WLED"},
 		{"property":"time_format", "label":"Display Mode: Time", "type":"textfield", "default":"hh:mm tt"},
 		{"property":"pixel_art", "label":"Display Mode: Pixel Art (make your own at pixelart.nolliergb.com", "type":"textfield", "default":"[ [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0], [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] ]"},
@@ -2468,6 +2469,8 @@ class WLEDDevice {
                         scaleFactor=1
                         if(Snake_display[led_index] == 0.5){
                             scaleFactor=darkGrey/100
+                        } else if(Snake_display[led_index] == 0.7){
+                            scaleFactor=lightGrey/100
                         }
                         if (LightingMode === "Forced") {
                             RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
