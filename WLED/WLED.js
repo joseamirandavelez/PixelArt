@@ -2040,7 +2040,7 @@ export function onpixel_artChanged()
 	{
 		try
 		{			
-			PIXELART = JSON.parse(pixel_art)
+			PIXELART = JSON.parse(pixel_art) 
 			device.log('Pixel Art Updated!');
 		}
 		catch(ex)
